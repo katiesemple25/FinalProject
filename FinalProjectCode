@@ -1,0 +1,98 @@
+#!/usr/bin/env pybricks-micropython
+from pybricks.hubs import EV3Brick
+from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
+                                 InfraredSensor, UltrasonicSensor, GyroSensor)
+from pybricks.parameters import Port, Stop, Direction, Button, Color
+from pybricks.tools import wait, StopWatch
+from pybricks.robotics import DriveBase
+from pybricks.media.ev3dev import SoundFile, ImageFile
+
+# Write your program here
+ev3 = EV3Brick()
+ev3.speaker.beep()
+
+#System Link Interface
+import ubinascii, ujson, urequests, utime
+
+#imports API key from separate file
+#from passwords import Key
+Key = 'bvd8X9LweQY9o2eP1NYL-p8mLL9wMAk6YYOnYSiIo0'
+
+#------System Link Interface------
+     
+def SL_setup():
+     urlBase = "https://api.systemlinkcloud.com/nitag/v2/tags/"
+     headers = {"Accept":"application/json","x-ni-api-key":Key}
+     return urlBase, headers
+     
+def Put_SL(Tag, Type, Value):
+     urlBase, headers = SL_setup()
+     urlValue = urlBase + Tag + "/values/current"
+     propValue = {"value":{"type":Type,"value":Value}}
+     try:
+          reply = urequests.put(urlValue,headers=headers,json=propValue).text
+     except Exception as e:
+          print(e)         
+          reply = 'failed'
+     return reply
+
+def Get_SL(Tag):
+     urlBase, headers = SL_setup()
+     urlValue = urlBase + Tag + "/values/current"
+     try:
+          value = urequests.get(urlValue,headers=headers).text
+          data = ujson.loads(value)
+          #print(data)
+          result = data.get("value").get("value")
+     except Exception as e:
+          print(e)
+          result = 'failed'
+     return result
+     
+def Create_SL(Tag, Type):
+     urlBase, headers = SL_setup()
+     urlTag = urlBase + Tag
+     propName={"type":Type,"path":Tag}
+     try:
+          urequests.put(urlTag,headers=headers,json=propName).text
+     except Exception as e:
+          print(e)
+
+##Initialize motors
+motor1 = Motor(Port.A)
+motor2 = Motor(Port.B, Direction.COUNTERCLOCKWISE)
+#motor3 = Motor(Port.C)
+
+##Initialize sensors
+sensor1 = ColorSensor(Port.S1)
+sensor2 = UltrasonicSensor(Port.S2)
+
+#get starting parameters
+
+start_angle1 = motor1.angle()
+start_angle2 = motor2.angle()
+print(start_angle2)
+
+
+##Launch ball to start
+#launch = Get_SL("launch_Semple")
+
+#print(sensor1.color())
+#if Get_SL("Start12")==True
+while True:
+    if sensor1.color() == Color.GREEN:
+        print(sensor1.color())
+        motor1.run_target(2000,350,Stop.BRAKE, True)
+        ##reset to start
+        motor1.run_target(-800,0,Stop.BRAKE, False)
+
+    #print(sensor2.distance())
+    if sensor2.distance()< 200:
+        motor2.run_target(1000,180,Stop.BRAKE,True)
+        motor2.run_target(-1000,0,Stop.BRAKE,True)
+
+
+    #Put_SL("Start13","BOOL","True")
+
+
+   
