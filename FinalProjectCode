@@ -73,12 +73,8 @@ start_angle1 = motor1.angle()
 start_angle2 = motor2.angle()
 print(start_angle2)
 
-
-##Launch ball to start
-#launch = Get_SL("launch_Semple")
-
-#print(sensor1.color())
-#if Get_SL("Start12")==True
+##Grab tag "true" from SystemLink to start program
+#if Get_SL("Start12")==True:
 while True:
     if sensor1.color() == Color.GREEN:
         print(sensor1.color())
