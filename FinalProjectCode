@@ -16,7 +16,7 @@ import ubinascii, ujson, urequests, utime
 
 #imports API key from separate file
 #from passwords import Key
-Key = 'bvd8X9LweQY9o2eP1NYL-p8mLL9wMAk6YYOnYSiIo0'
+Key = ''
 
 #------System Link Interface------
      
