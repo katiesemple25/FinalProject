@@ -16,7 +16,7 @@ import ubinascii, ujson, urequests, utime
 
 #imports API key from separate file
 #from passwords import Key
-Key = ''
+Key = 'bvd8X9LweQY9o2eP1NYL-p8mLL9wMAk6YYOnYSiIo0'
 
 #------System Link Interface------
      
@@ -59,36 +59,44 @@ def Create_SL(Tag, Type):
           print(e)
 
 ##Initialize motors
-motor1 = Motor(Port.A)
-motor2 = Motor(Port.B, Direction.COUNTERCLOCKWISE)
-#motor3 = Motor(Port.C)
+motor1 = Motor(Port.A, Direction.COUNTERCLOCKWISE)
+motor2 = Motor(Port.B, Direction.CLOCKWISE)
+motor3 = Motor(Port.C,Direction.CLOCKWISE)
 
 ##Initialize sensors
 sensor1 = ColorSensor(Port.S1)
 sensor2 = UltrasonicSensor(Port.S2)
-
+sensor3 = UltrasonicSensor(Port.S3)
+sensor4 = TouchSensor(Port.S4)
 #get starting parameters
 
 start_angle1 = motor1.angle()
 start_angle2 = motor2.angle()
-print(start_angle2)
 
-##Grab tag "true" from SystemLink to start program
-#if Get_SL("Start12")==True:
+#Put_SL('Start12','BOOLEAN','true')
+#print(Get_SL('Start12'))
+
 while True:
-    if sensor1.color() == Color.GREEN:
-        print(sensor1.color())
-        motor1.run_target(2000,350,Stop.BRAKE, True)
-        ##reset to start
-        motor1.run_target(-800,0,Stop.BRAKE, False)
+     print(Get_SL('Start12'))
+     while Get_SL('Start12')=='true':
+          print(sensor1.color())
+          if sensor1.color() == Color.GREEN:
+               motor1.run_target(2000,350,Stop.BRAKE, True)
+               ##reset to start
+               motor1.run_target(-800,0,Stop.BRAKE, False)
 
-    #print(sensor2.distance())
-    if sensor2.distance()< 200:
-        motor2.run_target(1000,180,Stop.BRAKE,True)
-        motor2.run_target(-1000,0,Stop.BRAKE,True)
+          print(sensor2.distance())
+          if sensor2.distance()< 185:
+               motor2.run_target(2000,180,Stop.BRAKE,True)
+               motor2.run_target(-1000,0,Stop.BRAKE,False)
+
+          if sensor3.distance() < 240:
+               motor3.run_target(2000,180,Stop.BRAKE,True)
+               motor3.run_target(-1000,0,Stop.BRAKE,True)
+
+          if sensor4.pressed() == True:
+               Put_SL('Start13','BOOLEAN','True')
+               print(Get_SL('Start13'))
 
 
-    #Put_SL("Start13","BOOL","True")
-
-
-   
+  
